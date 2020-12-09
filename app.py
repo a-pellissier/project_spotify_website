@@ -16,9 +16,9 @@ def get_own_collection_preview_urls(nb_of_tracks=5, offset=0):
     Returns list with tids and preview urls
     '''
     scope = "user-library-read"
-    SPOTIPY_CLIENT_ID=os.getenv('SPOTIPY_CLIENT_ID')
-    SPOTIPY_CLIENT_SECRET=os.getenv('SPOTIPY_CLIENT_SECRET')
-    SPOTIPY_REDIRECT_URI=os.getenv('SPOTIPY_REDIRECT_URI')
+    SPOTIPY_CLIENT_ID=os.environ.get('SPOTIPY_CLIENT_ID')
+    SPOTIPY_CLIENT_SECRET=os.environ.get('SPOTIPY_CLIENT_SECRET')
+    SPOTIPY_REDIRECT_URI=os.environ.get('SPOTIPY_REDIRECT_URI')
 
     sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=SPOTIPY_CLIENT_ID,client_secret=SPOTIPY_CLIENT_SECRET,redirect_uri=SPOTIPY_REDIRECT_URI,scope=scope))
     results = sp.current_user_saved_tracks(limit=nb_of_tracks, offset=offset)
