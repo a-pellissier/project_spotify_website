@@ -5,6 +5,8 @@ import requests
 from os.path import join
 from dotenv import load_dotenv
 import os
+import ipdb
+import webbrowser
 
 #env_path = join(os.dirname(os.dirname(__file__)),'.env') # ../../.env
 load_dotenv(dotenv_path='.env')
@@ -20,7 +22,27 @@ def get_own_collection_preview_urls(nb_of_tracks=5, offset=0):
     SPOTIPY_CLIENT_SECRET=os.environ.get('SPOTIPY_CLIENT_SECRET')
     SPOTIPY_REDIRECT_URI=os.environ.get('SPOTIPY_REDIRECT_URI')
 
-    sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=SPOTIPY_CLIENT_ID,client_secret=SPOTIPY_CLIENT_SECRET,redirect_uri=SPOTIPY_REDIRECT_URI,scope=scope))
+    # params = {'client_id':os.environ.get('SPOTIPY_CLIENT_ID'),
+    # 'response_type':'code',
+    # 'redirect_uri':os.environ.get('SPOTIPY_REDIRECT_URI'),
+    # 'scope':"user-library-read"}
+
+    # authorize = requests.get('https://accounts.spotify.com/authorize', params=params)
+    # r = requests.head(authorize.url, allow_redirects=True)
+    # st.write(r.url)
+    # webbrowser.open(r.url)
+    # st.write(r.url)
+
+    # return None
+
+
+
+    auth = SpotifyOAuth(client_id=SPOTIPY_CLIENT_ID,\
+        client_secret=SPOTIPY_CLIENT_SECRET,\
+        redirect_uri=SPOTIPY_REDIRECT_URI,\
+        scope=scope)
+
+    sp = spotipy.Spotify(auth_manager=auth)
     results = sp.current_user_saved_tracks(limit=nb_of_tracks, offset=offset)
     song_urls = []
     for idx, item in enumerate(results['items']):
