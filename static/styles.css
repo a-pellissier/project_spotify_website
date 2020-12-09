@@ -1,21 +1,44 @@
 
+body {
+  margin: 200px;
+  background: url(https://i.pinimg.com/originals/f7/72/1f/f7721f91dee77e7b4ea6acfd66e240b1.png);
+  background-size: cover;
+}
+
+.content {
+  padding: 50px;
+  background-color: rgba(255, 255, 255, .9);
+  border-radius: 10px;
+}
+
 h1 {
-    font-family: "IBM Plex Sans", sans-serif;
-    font-weight: 700;
-    font-size: 36px;
-    line-height: 36px;
-  }
-  
-  p {
-    font-family: "IBM Plex Sans", sans-serif;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 16px;
-  }
-  
-  .song-text {
-  }
-  
-  .song-genre {
-  }
+  font-family: "IBM Plex Sans", sans-serif;
+  font-weight: 700;
+  font-size: 36px;
+  line-height: 36px;
+}
+
+p {
+  font-family: "IBM Plex Sans", sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 16px;
+}
+
+.highlight {
+  color: blue;
+  font-weight: 500;
+}
+
+.song-text {
+}
+
+.song-genre {
+}
+
+.song-title {
+}
+
+.song-pred {
+}
   

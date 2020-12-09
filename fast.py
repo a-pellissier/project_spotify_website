@@ -4,9 +4,15 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import requests
+from requests_oauthlib import OAuth2Session
 
 app = FastAPI()
 
+
+client_id = "<your client key>"
+client_secret = "<your client secret>"
+authorization_base_url = 'https://github.com/login/oauth/authorize'
+token_url = 'https://github.com/login/oauth/access_token'
 api_url = 'https://projectspotify-76glfmoaxq-ew.a.run.app'
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
