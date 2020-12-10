@@ -33,6 +33,8 @@ authorization_base_url = 'https://accounts.spotify.com/authorize?'
 token_url = 'https://accounts.spotify.com/api/token'
 api_url = 'https://projectspotify-76glfmoaxq-ew.a.run.app'
 
+base_redirect_uri = 'http://localhost:5000'
+
 @app.route("/")
 def demo():
     """Step 1: User Authorization.
@@ -40,7 +42,7 @@ def demo():
     Redirect the user/resource owner to the OAuth provider (i.e. Github)
     using an URL with a few key OAuth parameters.
     """
-    spotify = OAuth2Session(client_id, redirect_uri='http://localhost:5000/callback', scope = 'user-library-read')
+    spotify = OAuth2Session(client_id, redirect_uri=f'{base_redirect_uri}/callback', scope = 'user-library-read')
     authorization_url, state = spotify.authorization_url(authorization_base_url)
 
     # State is used to prevent CSRF, keep this for later.
@@ -58,7 +60,7 @@ def callback():
     callback URL. With this redirection comes an authorization code included
     in the redirect URL. We will use that to obtain an access token.
     """
-    spotify = OAuth2Session(client_id, state=session['oauth_state'], redirect_uri = 'http://localhost:5000/callback')
+    spotify = OAuth2Session(client_id, state=session['oauth_state'], redirect_uri = f'{base_redirect_uri}/callback')
     token = spotify.fetch_token(token_url, client_secret=client_secret,
                                authorization_response=request.url)
 
@@ -112,7 +114,6 @@ def profile():
         song['prediction_genre'] = pred
         songs.append(song)
 
-    print(songs)
     # render template
     return render_template("item.html", request = request, songs= songs)
     return jsonify(songs)
