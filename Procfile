@@ -1,1 +1,1 @@
-web: sh setup.sh && streamlit run app.py
+web: sh setup.sh && env FLASK_APP=flask_app.py flask run
