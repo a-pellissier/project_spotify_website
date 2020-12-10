@@ -165,13 +165,13 @@ def profile():
         song['spotify_genre'] = get_genre_from_artist_id(artist_id)
 
         # getting the api prediction
-        # response = requests.get(f'{api_url}/predict_genre/{tid}')
-        # if response.status_code in range(200,299):
-        #     prediction = response.json()
-        #     pred = prediction['prediction']
-        # else: 
-        #     pred = 'Spotify caused an error 😞'
-        pred = 'later'
+        response = requests.get(f'{api_url}/predict_genre/{tid}')
+        if response.status_code in range(200,299):
+            prediction = response.json()
+            pred = prediction['prediction']
+        else: 
+            pred = 'Spotify caused an error 😞'
+        # pred = 'later'
         song['prediction_genre'] = pred
         songs.append(song)
 
