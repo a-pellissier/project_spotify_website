@@ -1,0 +1,25 @@
+<html>
+<head>
+
+  <title>Spotify</title>
+  <link rel="stylesheet" href="static/styles.css">
+
+</head>
+<body>
+
+  <div class="content">
+
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGuXST9nt2wSbEikjzjCR0tVTZQ1CR3Yipig&usqp=CAU">
+
+    {% for song in songs %}
+      <h1 class="song-text">{{ song["title"] }}</p>
+      <p class="song-genre">The genre is: <span class="highlight">{{ song["spotify_genre"] }}</span></p>
+      <p class="song-title">Querying the amazing API for {{ song["title"] }}</p>
+      <p class="song-pred">The predicted genre is {{ song["prediction_genre"]}}</p>
+      <hr>
+    {% endfor %}
+
+  </div>
+
+</body>
+</html>
