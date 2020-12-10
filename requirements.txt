@@ -8,3 +8,4 @@ python-dotenv
 jinja2
 flask
 flask_cors
+requests_oauthlib
