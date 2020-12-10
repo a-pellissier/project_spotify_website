@@ -33,7 +33,7 @@ authorization_base_url = 'https://accounts.spotify.com/authorize?'
 token_url = 'https://accounts.spotify.com/api/token'
 api_url = 'https://projectspotify-76glfmoaxq-ew.a.run.app'
 
-base_redirect_uri = 'http://localhost:5000'
+base_redirect_uri = 'https://lewagonmusicproject.herokuapp.com'
 
 @app.route("/")
 def demo():
