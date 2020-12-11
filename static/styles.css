@@ -1,13 +1,14 @@
-
+/* static/styles.css */
 body {
   margin: 200px;
   background: url(https://i.pinimg.com/originals/f7/72/1f/f7721f91dee77e7b4ea6acfd66e240b1.png);
   background-size: cover;
 }
 
+
 .content {
   padding: 50px;
-  background-color: rgba(255, 255, 255, .9);
+  background-color:rgba(255, 255, 255, .8);
   border-radius: 10px;
 }
 
@@ -16,6 +17,18 @@ h1 {
   font-weight: 700;
   font-size: 36px;
   line-height: 36px;
+  color: #1DB954;
+  text-align: center;
+  text-shadow: 1px 1px 1px #000;
+}
+
+h2 {
+  font-family: "IBM Plex Sans", sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 36px;
+  color: #191414;
+  text-align: center;
 }
 
 p {
@@ -23,11 +36,23 @@ p {
   font-weight: 400;
   font-size: 16px;
   line-height: 16px;
+  color : rgba(0, 0, 0, .8);
 }
 
-.highlight {
-  color: blue;
-  font-weight: 500;
+.a.button {
+  font-family: "IBM Plex Sans", sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 36px;
+  text-align: center;
+  -webkit-appearance: button;
+  -moz-appearance: button;
+  appearance: button;
+  text-decoration: none;
+  color: initial;
+}
+
+.song-title {
 }
 
 .song-text {
@@ -36,9 +61,40 @@ p {
 .song-genre {
 }
 
-.song-title {
-}
-
 .song-pred {
 }
-  
+
+
+.song-pred.highlight {
+  color: #1DB954;
+  font-weight: bolder;
+}
+
+.styled {
+  font-family: "IBM Plex Sans", sans-serif;
+  border: 0;
+  line-height: 2.5;
+  padding: 0 20px;
+  font-size: 1rem;
+  text-align: center;
+  color: #fff;
+  text-shadow: 1px 1px 1px #000;
+  border-radius: 10px;
+  background-color: rgba(150, 150, 150, 0.9);
+  background-image: linear-gradient(to top left,
+                                    rgba(0, 0, 0, .2),
+                                    rgba(0, 0, 0, .2) 30%,
+                                    rgba(0, 0, 0, 0));
+  box-shadow: inset 2px 2px 3px rgba(255, 255, 255, .6),
+              inset -2px -2px 3px rgba(0, 0, 0, .6);
+}
+
+.styled:hover {
+  background-color: rgba(30, 215, 96, 1);
+}
+
+.styled:active {
+  box-shadow: inset -2px -2px 3px rgba(255, 255, 255, .6),
+              inset 2px 2px 3px rgba(0, 0, 0, .6);
+}
+
