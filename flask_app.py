@@ -40,7 +40,7 @@ refresh_url = token_url
 
 scope = ['user-library-read', 'playlist-modify-public', 'playlist-modify-private', 'user-read-email', 'user-read-private']
 
-base_redirect_uri = 'https://lewagonmusicproject.herokuapp.com'
+base_redirect_uri = 'http://earworm.fr'
 
 
 # base_redirect_uri = 'http://localhost:5000'
