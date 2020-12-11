@@ -121,7 +121,7 @@ def menu():
     <body>
     <div class="content">
     <h1>Cool you're logged in now ! </h1>
-    <h2> Querying the amazing API to predict the genre of your five last liked songs on Spotify... </h2>
+    <h2> Querying the amazing API to predict the genre of your two last liked songs on Spotify... </h2>
     <center><input class="styled" type=button onclick=window.location.href='/profile'; value= "👉 Click here 👈" /> </center>
     </div>
     </body>
