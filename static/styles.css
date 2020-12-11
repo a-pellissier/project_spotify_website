@@ -3,9 +3,10 @@ body {
   margin: 200px;
   background: url(https://i.pinimg.com/originals/f7/72/1f/f7721f91dee77e7b4ea6acfd66e240b1.png);
   background-size: cover;
+  background-repeat: repeat;
 }
 
-
+/* https://cdn.hipwallpaper.com/i/7/90/TOBoug.jpg */
 .content {
   padding: 50px;
   background-color:rgba(255, 255, 255, .8);
