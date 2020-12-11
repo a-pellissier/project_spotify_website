@@ -5,8 +5,10 @@ from flask.json import jsonify
 from pprint import pformat
 from time import time
 import os
+import json
 from os.path import join
 from dotenv import load_dotenv
+from requests.structures import CaseInsensitiveDict
 
 from flask_cors import CORS
 app = Flask(__name__)
@@ -36,6 +38,8 @@ token_url = 'https://accounts.spotify.com/api/token'
 api_url = 'https://projectspotify-76glfmoaxq-ew.a.run.app'
 refresh_url = token_url
 
+scope = ['user-library-read', 'playlist-modify-public', 'playlist-modify-private', 'user-read-email', 'user-read-private']
+
 # base_redirect_uri = 'https://lewagonmusicproject.herokuapp.com'
 
 
@@ -55,6 +59,7 @@ def website():
     <div class="content">
     <h1>Welcome to 'Le Wagon roule sur Spotify'</h1>
     <h2> Do you want to test our AMAZING API 💣 ? </h2>
+    <p><br></p>
     <center><input class="styled" type=button onclick=window.location.href='/authentification'; value= "👉 Authentificate on Spotify 👈" /> </center>
     <p><br></p>
     <center><input class="styled" type=button onclick=window.location.href='/profile'; value= "👉 I am already authentified !👈" /> </center>
@@ -72,7 +77,7 @@ def authentification():
     Redirect the user/resource owner to the OAuth provider (i.e. Github)
     using an URL with a few key OAuth parameters.
     """
-    spotify = OAuth2Session(client_id, redirect_uri=f'{base_redirect_uri}/callback', scope = 'user-library-read')
+    spotify = OAuth2Session(client_id, redirect_uri=f'{base_redirect_uri}/callback', scope = scope)
     authorization_url, state = spotify.authorization_url(authorization_base_url)
 
     # State is used to prevent CSRF, keep this for later.
@@ -116,8 +121,8 @@ def menu():
     </head>
     <body>
     <div class="content">
-    <h1>Welcome to 'Le Wagon roule sur Spotify'</h1>
-    <h2> Do you want to test our AMAZING API 💣 ? </h2>
+    <h1>Cool you're logged in now ! </h1>
+    <h2> Querying the amazing API to predict the genre of your five last liked songs on Spotify... </h2>
     <center><input class="styled" type=button onclick=window.location.href='/profile'; value= "👉 Click here 👈" /> </center>
     </div>
     </body>
@@ -159,7 +164,9 @@ def profile():
         tid = track['id']
         song['artist'] = track['artists'][0]['name']
         song['title'] = track['name']
-
+        song['id'] = tid
+        
+ 
         # getting artist genres
         artist_id = track['artists'][0]['id']
         song['spotify_genre'] = get_genre_from_artist_id(artist_id)
@@ -173,6 +180,7 @@ def profile():
             pred = 'Spotify caused an error 😞'
         # pred = 'later'
         song['prediction_genre'] = pred
+        song['link'] = f"/classify/{song['prediction_genre']}/{song['id']}"
         songs.append(song)
 
     
@@ -241,8 +249,42 @@ def validate():
     return jsonify(requests.get(validate_url).json())
 
 
+# @app.route("/classify/<genre>/<track_id>", methods=["GET"])
+# def classify(genre, track_id):
+#     """Validate a token with the OAuth provider Spotify.
+#     """
+#     if 'oauth_token' not in session.keys():
+#             return redirect(url_for('.authentification'))
+        
+#     spotify = OAuth2Session(client_id, token=session['oauth_token'])
+#     current_user_id_url = 'https://api.spotify.com/v1/me'
 
-# @app.get("/", response_class=HTMLResponse)
+#     results = spotify.get(f'{current_user_id_url}').json()
+#     user_id = results['id']
+#     print(user_id)
+    
+#     url_classify = f'https://api.spotify.com/v1/users/{user_id}/playlists'
+
+#     headers = CaseInsensitiveDict()
+#     headers["Accept"] = "application/json"
+#     headers["Content-Type"] = "application/json"
+
+#     body = {'name':f"{genre}",'description':'New playlist description','public':False}
+
+#     resp = spotify.post(f'{url_classify}', data = json.dumps(body)).json()
+
+#     playlist_id = resp['id']
+
+#     uri_track = f'spotify:track:{track_id}'
+#     url_post_track = "https://api.spotify.com/v1/playlists/{playlist_id}/tracks?position=0&uris={uri_track}"
+
+#     resp = requests.post(url_post_track, headers=headers)
+
+#     return {'answer':True}
+
+
+
+# @app.get("/classify", response_class=HTMLResponse)
 # def web_root(request: Request):
 
 #     token = requests.get('/spotify_response').json()['resp']
