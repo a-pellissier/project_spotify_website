@@ -122,7 +122,7 @@ def menu():
     <body>
     <div class="content">
     <h1>Cool you're logged in now ! </h1>
-    <h2> Querying the amazing API to predict the genre of your five last liked songs on Spotify... </h2>
+    <h2> Querying the amazing API to predict the genre of your last three liked songs on Spotify... </h2>
     <center><input class="styled" type=button onclick=window.location.href='/profile'; value= "👉 Click here 👈" /> </center>
     </div>
     </body>
@@ -142,7 +142,7 @@ def profile():
         return redirect(url_for('.authentification'))
         
     spotify = OAuth2Session(client_id, token=session['oauth_token'])
-    current_user_tracks_url = 'https://api.spotify.com/v1/me/tracks?limit=5'
+    current_user_tracks_url = 'https://api.spotify.com/v1/me/tracks?limit=3'
 
     def get_genre_from_artist_id(id): 
         artist_url = f'https://api.spotify.com/v1/artists/{id}'
