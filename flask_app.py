@@ -16,7 +16,6 @@ CORS(app)
 
 load_dotenv(dotenv_path='.env')
 
-
 SPOTIPY_CLIENT_ID=os.environ.get('SPOTIPY_CLIENT_ID')
 SPOTIPY_CLIENT_SECRET=os.environ.get('SPOTIPY_CLIENT_SECRET')
 
@@ -161,7 +160,8 @@ def profile():
         'Jazz':'https://giphy.com/embed/CpfSSEsP7EHza',
         'Pop':'https://giphy.com/embed/iI5slsPoBRFgk',
         'Electronic':'https://giphy.com/embed/aUhEBE0T8XNHa',
-        'No prediction, sorry baby boy':'https://giphy.com/embed/d2lcHJTG5Tscg'
+        'No prediction, sorry baby boy':'https://giphy.com/embed/d2lcHJTG5Tscg', 
+        'later':'https://giphy.com/embed/d2lcHJTG5Tscg'
     }
 
     results = spotify.get(f'{current_user_tracks_url}').json()
@@ -194,9 +194,18 @@ def profile():
         song['gif'] = gifs[song['prediction_genre']]
         songs.append(song)
 
+    genres = {}
+    for song in songs:
+        genres[song['prediction_genre']] = genres.get(song['prediction_genre'], [])
+        genres[song['prediction_genre']].append(song['id'])
     
+    genres_playlist = []
+    for genre in genres.keys():
+        genres_playlist.append({'genre':genre,'tracks':genres[genre],'link':f"/classify/{genre}/{'/'.join(genres[genre])}"})
+
+    print(genres_playlist)
     # render template
-    return render_template("item.html", request = request, songs= songs)
+    return render_template("item.html", request = request, songs= songs, genres = genres_playlist)
     return jsonify(songs)
     # return templates.TemplateResponse("item.html", {"request": request, "songs": songs})
 
@@ -260,37 +269,384 @@ def validate():
     return jsonify(requests.get(validate_url).json())
 
 
-# @app.route("/classify/<genre>/<track_id>", methods=["GET"])
-# def classify(genre, track_id):
-#     """Validate a token with the OAuth provider Spotify.
-#     """
-#     if 'oauth_token' not in session.keys():
-#             return redirect(url_for('.authentification'))
-        
-#     spotify = OAuth2Session(client_id, token=session['oauth_token'])
-#     current_user_id_url = 'https://api.spotify.com/v1/me'
+@app.route('/classify/<genre>/<track_id_1>', methods=["GET"])
+def classify_1(genre, track_id_1):
+    if 'oauth_token' not in session.keys():
+        return redirect(url_for('.authentification'))
+    tracks = [track_id_1]
 
-#     results = spotify.get(f'{current_user_id_url}').json()
-#     user_id = results['id']
-#     print(user_id)
+    spotify = OAuth2Session(client_id, token=session['oauth_token'])
+    current_user_id_url = 'https://api.spotify.com/v1/me'
+
+    results = spotify.get(f'{current_user_id_url}').json()
+    user_id = results['id']
+
+    url_classify = f'https://api.spotify.com/v1/users/{user_id}/playlists'
+
+    headers = CaseInsensitiveDict()
+    headers["Accept"] = "application/json"
+    headers["Content-Type"] = "application/json"
+
+    body = {'name':f"{genre}",'description':'New playlist description','public':False}
+
+    resp = spotify.post(f'{url_classify}', data = json.dumps(body)).json()
+
+    playlist_id = resp['id']
+
+    for track_id in tracks:
+        uri_track = f'spotify%3Atrack%3A{track_id}'
+        url_post_track = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks?position=0&uris={uri_track}"
+        resp = spotify.post(url_post_track, headers=headers).json()
+
+    return """
+    <head>
+
+    <title>🎵 Spotify 🎵</title>
+    <style>
+    body {
+    margin: 200px;
+    background: url(https://i.pinimg.com/originals/f7/72/1f/f7721f91dee77e7b4ea6acfd66e240b1.png);
+    background-size: cover;
+    background-repeat: repeat;
+    }
+
+    .content {
+    padding: 50px;
+    background-color:rgba(255, 255, 255, .8);
+    border-radius: 10px;
+    }
+
+    h1 {
+    font-family: "IBM Plex Sans", sans-serif;
+    font-weight: 700;
+    font-size: 36px;
+    line-height: 36px;
+    color: #1DB954;
+    text-align: center;
+    text-shadow: 1px 1px 1px #000;
+    }
+
+    h2 {
+    font-family: "IBM Plex Sans", sans-serif;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 36px;
+    color: #191414;
+    text-align: center;
+    }
+
+    p {
+    font-family: "IBM Plex Sans", sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 16px;
+    color : rgba(0, 0, 0, .8);
+    }
+
+    .a.button {
+    font-family: "IBM Plex Sans", sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 36px;
+    text-align: center;
+    -webkit-appearance: button;
+    -moz-appearance: button;
+    appearance: button;
+    text-decoration: none;
+    color: initial;
+    }
+
+    .styled {
+    font-family: "IBM Plex Sans", sans-serif;
+    border: 0;
+    line-height: 2.5;
+    padding: 0 20px;
+    font-size: 1rem;
+    text-align: center;
+    color: #fff;
+    text-shadow: 1px 1px 1px #000;
+    border-radius: 10px;
+    background-color: rgba(150, 150, 150, 0.9);
+    background-image: linear-gradient(to top left,
+                                        rgba(0, 0, 0, .2),
+                                        rgba(0, 0, 0, .2) 30%,
+                                        rgba(0, 0, 0, 0));
+    box-shadow: inset 2px 2px 3px rgba(255, 255, 255, .6),
+                inset -2px -2px 3px rgba(0, 0, 0, .6);
+    }
+
+    .styled:hover {
+    background-color: rgba(30, 215, 96, 1);
+    }
+
+    .styled:active {
+    box-shadow: inset -2px -2px 3px rgba(255, 255, 255, .6),
+                inset 2px 2px 3px rgba(0, 0, 0, .6);
+    }
+    </style>
+
+    </head>
+    <body>
+    <div class="content">
+    <h1> Go check your Spotify... </h1>
+    <h2> Your tracks are classified ! </h2>
+    <center><input class="styled" type=button onclick=window.location.href='/profile'; value= "👉 Go back to predictions 👈" /> </center>
+    </div>
+    </body>
+    """
+
+@app.route('/classify/<genre>/<track_id_1>/<track_id_2>', methods=["GET"])
+def classify_2(genre, track_id_1, track_id_2 = None, track_id_3 = None):
+    if 'oauth_token' not in session.keys():
+        return redirect(url_for('.authentification'))
+    tracks = [track_id_1, track_id_2]
     
-#     url_classify = f'https://api.spotify.com/v1/users/{user_id}/playlists'
+    spotify = OAuth2Session(client_id, token=session['oauth_token'])
+    current_user_id_url = 'https://api.spotify.com/v1/me'
 
-#     headers = CaseInsensitiveDict()
-#     headers["Accept"] = "application/json"
-#     headers["Content-Type"] = "application/json"
+    results = spotify.get(f'{current_user_id_url}').json()
+    user_id = results['id']
 
-#     body = {'name':f"{genre}",'description':'New playlist description','public':False}
+    url_classify = f'https://api.spotify.com/v1/users/{user_id}/playlists'
 
-#     resp = spotify.post(f'{url_classify}', data = json.dumps(body)).json()
+    headers = CaseInsensitiveDict()
+    headers["Accept"] = "application/json"
+    headers["Content-Type"] = "application/json"
 
-#     playlist_id = resp['id']
+    body = {'name':f"{genre}",'description':'New playlist description','public':False}
 
-#     uri_track = f'spotify:track:{track_id}'
-#     url_post_track = "https://api.spotify.com/v1/playlists/{playlist_id}/tracks?position=1&uris={uri_track}"
+    resp = spotify.post(f'{url_classify}', data = json.dumps(body)).json()
 
-#     resp = requests.post(url_post_track, headers=headers)
+    playlist_id = resp['id']
 
-#     return {'answer':True}
+    for track_id in tracks:
+        uri_track = f'spotify%3Atrack%3A{track_id}'
+        url_post_track = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks?position=0&uris={uri_track}"
+        resp = spotify.post(url_post_track, headers=headers).json()
+
+    return """
+    <head>
+
+    <title>🎵 Spotify 🎵</title>
+    <style>
+    body {
+    margin: 200px;
+    background: url(https://i.pinimg.com/originals/f7/72/1f/f7721f91dee77e7b4ea6acfd66e240b1.png);
+    background-size: cover;
+    background-repeat: repeat;
+    }
+
+    .content {
+    padding: 50px;
+    background-color:rgba(255, 255, 255, .8);
+    border-radius: 10px;
+    }
+
+    h1 {
+    font-family: "IBM Plex Sans", sans-serif;
+    font-weight: 700;
+    font-size: 36px;
+    line-height: 36px;
+    color: #1DB954;
+    text-align: center;
+    text-shadow: 1px 1px 1px #000;
+    }
+
+    h2 {
+    font-family: "IBM Plex Sans", sans-serif;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 36px;
+    color: #191414;
+    text-align: center;
+    }
+
+    p {
+    font-family: "IBM Plex Sans", sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 16px;
+    color : rgba(0, 0, 0, .8);
+    }
+
+    .a.button {
+    font-family: "IBM Plex Sans", sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 36px;
+    text-align: center;
+    -webkit-appearance: button;
+    -moz-appearance: button;
+    appearance: button;
+    text-decoration: none;
+    color: initial;
+    }
+
+    .styled {
+    font-family: "IBM Plex Sans", sans-serif;
+    border: 0;
+    line-height: 2.5;
+    padding: 0 20px;
+    font-size: 1rem;
+    text-align: center;
+    color: #fff;
+    text-shadow: 1px 1px 1px #000;
+    border-radius: 10px;
+    background-color: rgba(150, 150, 150, 0.9);
+    background-image: linear-gradient(to top left,
+                                        rgba(0, 0, 0, .2),
+                                        rgba(0, 0, 0, .2) 30%,
+                                        rgba(0, 0, 0, 0));
+    box-shadow: inset 2px 2px 3px rgba(255, 255, 255, .6),
+                inset -2px -2px 3px rgba(0, 0, 0, .6);
+    }
+
+    .styled:hover {
+    background-color: rgba(30, 215, 96, 1);
+    }
+
+    .styled:active {
+    box-shadow: inset -2px -2px 3px rgba(255, 255, 255, .6),
+                inset 2px 2px 3px rgba(0, 0, 0, .6);
+    }
+    </style>
+
+    </head>
+    <body>
+    <div class="content">
+    <h1> Go check your Spotify... </h1>
+    <h2> Your tracks are classified ! </h2>
+    <center><input class="styled" type=button onclick=window.location.href='/profile'; value= "👉 Go back to predictions 👈" /> </center>
+    </div>
+    </body>
+    """
+
+@app.route("/classify/<genre>/<track_id_1>/<track_id_2>/<track_id_3>", methods=["GET"])
+def classify_3(genre, track_id_1, track_id_2 = None, track_id_3 = None):
+    """Validate a token with the OAuth provider Spotify.
+    """
+    if 'oauth_token' not in session.keys():
+            return redirect(url_for('.authentification'))
+    
+    tracks = [track_id_1, track_id_2, track_id_3]
+
+    spotify = OAuth2Session(client_id, token=session['oauth_token'])
+    current_user_id_url = 'https://api.spotify.com/v1/me'
+
+    results = spotify.get(f'{current_user_id_url}').json()
+    user_id = results['id']
+
+    url_classify = f'https://api.spotify.com/v1/users/{user_id}/playlists'
+
+    headers = CaseInsensitiveDict()
+    headers["Accept"] = "application/json"
+    headers["Content-Type"] = "application/json"
+
+    body = {'name':f"{genre}",'description':'New playlist description','public':False}
+
+    resp = spotify.post(f'{url_classify}', data = json.dumps(body)).json()
+
+    playlist_id = resp['id']
+    for track_id in tracks:
+        uri_track = f'spotify%3Atrack%3A{track_id}'
+        url_post_track = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks?position=0&uris={uri_track}"
+        resp = spotify.post(url_post_track, headers=headers).json()
+
+    return """
+    <head>
+
+    <title>🎵 Spotify 🎵</title>
+    <style>
+    body {
+    margin: 200px;
+    background: url(https://i.pinimg.com/originals/f7/72/1f/f7721f91dee77e7b4ea6acfd66e240b1.png);
+    background-size: cover;
+    background-repeat: repeat;
+    }
+
+    .content {
+    padding: 50px;
+    background-color:rgba(255, 255, 255, .8);
+    border-radius: 10px;
+    }
+
+    h1 {
+    font-family: "IBM Plex Sans", sans-serif;
+    font-weight: 700;
+    font-size: 36px;
+    line-height: 36px;
+    color: #1DB954;
+    text-align: center;
+    text-shadow: 1px 1px 1px #000;
+    }
+
+    h2 {
+    font-family: "IBM Plex Sans", sans-serif;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 36px;
+    color: #191414;
+    text-align: center;
+    }
+
+    p {
+    font-family: "IBM Plex Sans", sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 16px;
+    color : rgba(0, 0, 0, .8);
+    }
+
+    .a.button {
+    font-family: "IBM Plex Sans", sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 36px;
+    text-align: center;
+    -webkit-appearance: button;
+    -moz-appearance: button;
+    appearance: button;
+    text-decoration: none;
+    color: initial;
+    }
+
+    .styled {
+    font-family: "IBM Plex Sans", sans-serif;
+    border: 0;
+    line-height: 2.5;
+    padding: 0 20px;
+    font-size: 1rem;
+    text-align: center;
+    color: #fff;
+    text-shadow: 1px 1px 1px #000;
+    border-radius: 10px;
+    background-color: rgba(150, 150, 150, 0.9);
+    background-image: linear-gradient(to top left,
+                                        rgba(0, 0, 0, .2),
+                                        rgba(0, 0, 0, .2) 30%,
+                                        rgba(0, 0, 0, 0));
+    box-shadow: inset 2px 2px 3px rgba(255, 255, 255, .6),
+                inset -2px -2px 3px rgba(0, 0, 0, .6);
+    }
+
+    .styled:hover {
+    background-color: rgba(30, 215, 96, 1);
+    }
+
+    .styled:active {
+    box-shadow: inset -2px -2px 3px rgba(255, 255, 255, .6),
+                inset 2px 2px 3px rgba(0, 0, 0, .6);
+    }
+    </style>
+
+    </head>
+    <body>
+    <div class="content">
+    <h1> Go check your Spotify... </h1>
+    <h2> Your tracks are classified ! </h2>
+    <center><input class="styled" type=button onclick=window.location.href='/profile'; value= "👉 Go back to predictions 👈" /> </center>
+    </div>
+    </body>
+    """
 
     
