@@ -65,9 +65,10 @@ p {
 }
 
 
-.song-pred.highlight {
+.highlight {
   color: #1DB954;
   font-weight: bolder;
+  font-size: 22px;
 }
 
 .styled {
