@@ -142,7 +142,7 @@ def profile():
         return redirect(url_for('.authentification'))
         
     spotify = OAuth2Session(client_id, token=session['oauth_token'])
-    current_user_tracks_url = 'https://api.spotify.com/v1/me/tracks?limit=2'
+    current_user_tracks_url = 'https://api.spotify.com/v1/me/tracks?limit=5'
 
     def get_genre_from_artist_id(id): 
         artist_url = f'https://api.spotify.com/v1/artists/{id}'
@@ -154,8 +154,18 @@ def profile():
             result = ', '.join([item.capitalize() for item in result])
         return result
 
+    gifs = {
+        'Classic':'https://giphy.com/embed/YRcDta67pkig6wPoip',
+        'Rock':'https://giphy.com/embed/ifCT1dv4jfnSo', 
+        'Hip-Hop':'https://giphy.com/embed/fpjdKdw0YwjHa',
+        'Jazz':'https://giphy.com/embed/CpfSSEsP7EHza',
+        'Pop':'https://giphy.com/embed/iI5slsPoBRFgk',
+        'Electronic':'https://giphy.com/embed/aUhEBE0T8XNHa',
+        'No prediction, sorry baby boy':'https://giphy.com/embed/d2lcHJTG5Tscg'
+    }
 
     results = spotify.get(f'{current_user_tracks_url}').json()
+
     # response = jsonify(spotify.get(f'{current_user_tracks_url}').json())
     songs = []
     for item in results['items']:
@@ -181,6 +191,7 @@ def profile():
         # pred = 'later'
         song['prediction_genre'] = pred
         song['link'] = f"/classify/{song['prediction_genre']}/{song['id']}"
+        song['gif'] = gifs[song['prediction_genre']]
         songs.append(song)
 
     
@@ -276,23 +287,10 @@ def validate():
 #     playlist_id = resp['id']
 
 #     uri_track = f'spotify:track:{track_id}'
-#     url_post_track = "https://api.spotify.com/v1/playlists/{playlist_id}/tracks?position=0&uris={uri_track}"
+#     url_post_track = "https://api.spotify.com/v1/playlists/{playlist_id}/tracks?position=1&uris={uri_track}"
 
 #     resp = requests.post(url_post_track, headers=headers)
 
 #     return {'answer':True}
-
-
-
-# @app.get("/classify", response_class=HTMLResponse)
-# def web_root(request: Request):
-
-#     token = requests.get('/spotify_response').json()['resp']
-
-#     # get songs from spotify
-#     headers = dict()
-#     headers["Authorization"] = f"Bearer {token}"
-#     current_user_tracks_url = 'https://api.spotify.com/v1/me/tracks'
-
 
     
