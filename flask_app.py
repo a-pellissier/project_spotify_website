@@ -39,7 +39,7 @@ refresh_url = token_url
 
 scope = ['user-library-read', 'playlist-modify-public', 'playlist-modify-private', 'user-read-email', 'user-read-private']
 
-base_redirect_uri = 'https://lewagonmusicproject.herokuapp.com'
+base_redirect_uri = 'http://earworm.fr'
 
 
 # base_redirect_uri = 'http://localhost:5000'
@@ -121,7 +121,7 @@ def menu():
     <body>
     <div class="content">
     <h1>Cool you're logged in now ! </h1>
-    <h2> Querying the amazing API to predict the genre of your two last liked songs on Spotify... </h2>
+    <h2> Querying the amazing API to predict the genre of your last three liked songs on Spotify... </h2>
     <center><input class="styled" type=button onclick=window.location.href='/profile'; value= "👉 Click here 👈" /> </center>
     </div>
     </body>
